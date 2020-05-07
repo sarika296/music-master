@@ -1,6 +1,30 @@
 import React, {Component} from 'react';
 
 class Tracks extends Component {
+    state = { playing :false , audio:null, twiceClick:null };
+
+    playAudio = previewUrl => () => {
+        const audio = new Audio(previewUrl);
+
+        if(!this.state.playing)
+        {
+            audio.play();
+            this.setState({ playing: true , audio, twiceClick:previewUrl});
+        }
+        else{
+            this.state.audio.pause();
+            if(this.state.twiceClick === previewUrl) {
+                this.setState({ playing: false});
+            }
+            else {
+                audio.play();
+                this.setState({ audio, twiceClick:previewUrl});
+            }
+            
+        }
+        
+    }
+
     render() {
         const {tracks}=this.props;
 
@@ -8,10 +32,10 @@ class Tracks extends Component {
             <div>
                 {
                     tracks.map(track => {
-                        const {id, name, album }=track;
+                        const {id, name, album, preview_url }=track;
 
                         return(
-                            <div key={id}>
+                            <div key={id} onClick={this.playAudio(preview_url)}>
                             <img src={album.images[0].url} alt='track-profile' />
                             <p>{name}</p>
                             </div>
